@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title></title>
+  <link rel="stylesheet" href="main.css">
+
+  <script src="rangy-1.3.0/rangy-core.js"></script>
+  <script src="jquery.min.js"></script>
+</head>
+<body>
+
+  <h1>hello, world</h1>
+  <p>几天后，撒旦怒冲冲地上到天堂之门，要求圣彼得给出一个解释。</p>
+  <p>“你的所作所为纯粹是恐怖主义！”他说，“你将那个人送下地狱，而他完全破坏了我的威望！从一住进来，他就开始倾听人们的言语，直视他们，并跟他们交谈。现在，每个人都在分享他们的感受，互相拥抱和亲吻。在地狱里我不想有这种事情发生！请你让他进入天堂！”</p>
+
+  <img src="http://i1.hdslb.com/u_user/4e575551c5687b06ac49103e0470025d.jpg"/>
+
+  <img src="http://img0.imgtn.bdimg.com/it/u=411239924,860115466&fm=21&gp=0.jpg"/>
+
+  <div class="faster-icon"></div>
+
+  <ul class="faster-container">
+  </ul>
+
+  <script src="faster.js"></script>
+  <script src="listener.js"></script>
+
+  <script>
+    var fetchData = function () {
+      $('ul.faster-container').html('<li class="faster-header"><div style="text-align: right">Faster&nbsp;<i class="faster-logo"></i></div><button></button></li>');
+
+      $.get('http://100.101.102.103:8000/all?cache=' + (new Date()).getTime()).success(function (data) {
+        if (!data.error) {
+          data.channels.length && data.channels[0].messages.forEach(function (msg) {
+            var obj = JSON.parse(msg.content);
+            var html = '<li class="faster-element">';
+            if (obj.title)
+              html += '<p class="faster-title">' + obj.title + '</p>';
+            if (obj.image)
+              html += '<img class="faster-image" src="' + obj.image + '">';
+            if (obj.text)
+              html += '<p class="faster-text">' + obj.text + '</p>';
+            if (obj.date)
+              html += '<p class="faster-date">' + obj.date + '</p>';
+            html += '</li>';
+            $('ul.faster-container').append(html);
+          });
+        }
+      });
+    };
+
+    var faster = new Faster(function (data) {
+      $.ajax({
+        method: 'POST',
+        url: 'http://100.101.102.103:8000/post/0000000000000000000000000000000000000000',
+        data: JSON.stringify(data),
+        dataType: 'json'
+      }).success(function (data) {
+        fetchData();
+      });
+    });
+
+    fetchData();
+
+  </script>
+</body>
+</html>
